@@ -1,0 +1,99 @@
+<!--tactics-analysis.wxml-->
+<view class="container">
+  <!-- 模式选择 -->
+  <view class="mode-selector">
+    <view class="mode-tabs">
+      <view 
+        class="mode-tab {{currentMode === 'singles' ? 'active' : ''}}" 
+        bindtap="onModeChange" 
+        data-mode="singles"
+      >
+        <text class="mode-text">单打</text>
+      </view>
+      <view 
+        class="mode-tab {{currentMode === 'doubles' ? 'active' : ''}}" 
+        bindtap="onModeChange" 
+        data-mode="doubles"
+      >
+        <text class="mode-text">双打</text>
+      </view>
+    </view>
+    
+    <!-- 手绘功能按钮 -->
+    <view class="drawing-controls">
+      <view 
+        class="control-btn {{isDrawing ? 'active' : ''}}" 
+        bindtap="onToggleDrawing"
+      >
+        <text class="control-icon">✏️</text>
+        <text class="control-text">手绘</text>
+      </view>
+      <view 
+        class="control-btn clear-btn" 
+        bindtap="onClearDrawing"
+      >
+        <text class="control-icon">🗑️</text>
+        <text class="control-text">清空</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 羽毛球场地 -->
+  <view class="court-container">
+    <canvas 
+      class="court-canvas" 
+      canvas-id="badmintonCourt"
+      bindtouchstart="onCanvasTouchStart"
+      bindtouchmove="onCanvasTouchMove"
+      bindtouchend="onCanvasTouchEnd"
+    ></canvas>
+    
+    <!-- 球员和球的元素覆盖层 -->
+    <view class="elements-overlay">
+      <!-- 羽毛球 -->
+      <image 
+        class="shuttlecock" 
+        src="/images/icons/badminton.png"
+        style="left: {{shuttlecock.x}}px; top: {{shuttlecock.y}}px;"
+        data-type="shuttlecock"
+        bindtouchstart="onElementTouchStart"
+        bindtouchmove="onElementTouchMove"
+        bindtouchend="onElementTouchEnd"
+      ></image>
+      
+      <!-- 球员A队（红色） -->
+      <view 
+        wx:for="{{playersA}}" 
+        wx:key="id"
+        class="player player-a" 
+        style="left: {{item.x}}px; top: {{item.y}}px;"
+        data-type="player"
+        data-team="A"
+        data-id="{{item.id}}"
+        bindtouchstart="onElementTouchStart"
+        bindtouchmove="onElementTouchMove"
+        bindtouchend="onElementTouchEnd"
+      >
+        <view class="player-icon">🏃‍♂️</view>
+        <view class="player-label">A{{item.id}}</view>
+      </view>
+      
+      <!-- 球员B队（蓝色） -->
+      <view 
+        wx:for="{{playersB}}" 
+        wx:key="id"
+        class="player player-b" 
+        style="left: {{item.x}}px; top: {{item.y}}px;"
+        data-type="player"
+        data-team="B"
+        data-id="{{item.id}}"
+        bindtouchstart="onElementTouchStart"
+        bindtouchmove="onElementTouchMove"
+        bindtouchend="onElementTouchEnd"
+      >
+        <view class="player-icon">🏃‍♂️</view>
+        <view class="player-label">B{{item.id}}</view>
+      </view>
+    </view>
+  </view>
+</view>

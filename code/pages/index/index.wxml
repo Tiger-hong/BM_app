@@ -1,0 +1,175 @@
+<!--index.wxml-->
+<view class="container">
+  <!-- 背景图片区域 -->
+  <view class="hero-bg">
+    <!-- 背景图片 -->
+    <image class="hero-bg-image" src="/images/backgrounds/bg1.png" mode="widthFix"></image>
+    <view class="hero-content">
+      <text class="hero-title">Badminton</text>
+      <text class="hero-subtitle">一击即中 羽你争锋</text>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-container">
+    <view class="search-box">
+      <image class="search-icon" src="/images/icons/search.png" mode="aspectFit"></image>
+      <input 
+        class="search-input" 
+        placeholder="搜索球馆" 
+        value="{{searchValue}}"
+        bindinput="onSearchInput"
+        bindfocus="onSearchFocus"
+        bindblur="onSearchBlur"
+        bindconfirm="onSearchConfirm"
+      />
+      <text class="clear-btn" wx:if="{{searchValue}}" bindtap="onClearSearch">✕</text>
+    </view>
+    
+    <!-- 搜索下拉框 -->
+    <view class="search-dropdown" wx:if="{{showSearchDropdown && searchResults.length > 0}}">
+      <view 
+        class="search-item" 
+        wx:for="{{searchResults}}" 
+        wx:key="id"
+        bindtap="onSearchItemTap"
+        data-venue="{{item}}"
+      >
+        <text class="search-item-name">{{item.name}}</text>
+        <text class="search-item-arrow">→</text>
+      </view>
+    </view>
+    
+    <!-- 搜索遮罩 -->
+    <view class="search-mask" wx:if="{{showSearchDropdown}}" bindtap="onSearchBlur"></view>
+  </view>
+
+  <!-- 轮播图 -->
+  <view class="banner-container">
+    <swiper class="banner-swiper" indicator-dots="true" autoplay="true" interval="3000" duration="1000" circular="true">
+      <swiper-item wx:for="{{bannerList}}" wx:key="id" class="banner-item">
+        <view class="banner-content">
+          <!-- 轮播图片占位符 - 请在这里替换为您的轮播图片 -->
+          <image class="banner-bg-image" src="{{item.imageUrl || ''}}" mode="aspectFill"></image>
+          <view class="banner-text-container">
+            <text class="banner-title">{{item.title}}</text>
+            <text class="banner-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 常看球馆 -->
+  <view class="frequent-venues">
+    <view class="section-header">
+      <text class="section-icon">🏟️</text>
+      <text class="section-title">常看球馆</text>
+     
+    </view>
+    <view class="venues-grid" wx:if="{{frequentVenues.length > 0}}">
+      <view class="venue-card" wx:for="{{frequentVenues}}" wx:key="id" wx:if="{{index < 4}}" bindtap="onVenueTap" data-venue="{{item}}">
+        <view class="venue-image">
+          <!-- 球馆logo图片 -->
+          <image class="venue-logo" src="{{item.logo || ''}}" mode="aspectFill" wx:if="{{item.logo}}"></image>
+          <!-- 如果没有logo则显示emoji -->
+          <text class="venue-emoji" wx:else>{{item.emoji || '🏸'}}</text>
+        </view>
+        <view class="venue-info">
+          <text class="venue-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🏸</text>
+      <text class="empty-text">暂无常看球馆</text>
+      <text class="empty-hint">浏览球馆详情后会自动记录</text>
+    </view>
+  </view>
+
+  <!-- 小功能 -->
+  <view class="mini-features">
+    <view class="section-header">
+      <text class="section-icon">⚡</text>
+      <text class="section-title">小功能</text>
+    </view>
+    <view class="features-grid">
+      <view class="feature-card" bindtap="onScoreboardTap">
+        <view class="feature-icon">
+          <text class="feature-emoji">📊</text>
+        </view>
+        <text class="feature-name">计分板</text>
+      </view>
+      <!-- 羽毛球等级评定功能 -->
+      <view class="feature-card" bindtap="onRatingTap">
+        <view class="feature-icon">
+          <text class="feature-emoji">🏆</text>
+        </view>
+        <text class="feature-name">等级评定</text>
+      </view>
+      <!-- 战术分析功能 -->
+      <view class="feature-card" bindtap="onTacticsAnalysisTap">
+        <view class="feature-icon">
+          <text class="feature-emoji">🏨</text>
+        </view>
+        <text class="feature-name">战术分析</text>
+      </view>
+      <!-- 微信联系功能 -->
+      <view class="feature-card" bindtap="onWechatContactTap">
+        <view class="feature-icon">
+          <text class="feature-emoji">💬</text>
+        </view>
+        <text class="feature-name">微信联系</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 羽毛球等级评定弹框 -->
+  <view class="rating-modal" wx:if="{{showRatingModal}}" bindtap="onCloseRatingModal">
+    <view class="rating-modal-content" catchtap="stopPropagation">
+      <view class="rating-modal-header">
+        <text class="rating-modal-title">业余羽毛球等级说明</text>
+        <text class="rating-modal-close" bindtap="onCloseRatingModal">✕</text>
+      </view>
+      <view class="rating-modal-body">
+        <scroll-view class="rating-list" scroll-y="true">
+          <view class="rating-item" wx:for="{{ratingLevels}}" wx:key="level">
+            <view class="rating-header">
+              <view class="rating-level" style="background-color: {{item.color}}">
+                <text class="rating-level-text">{{item.level}}</text>
+              </view>
+            </view>
+            <view class="rating-description">
+              <text class="description-text">{{item.description}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 微信联系弹框 -->
+  <view class="wechat-modal" wx:if="{{showWechatModal}}" bindtap="onCloseWechatModal">
+    <view class="wechat-modal-content" catchtap="stopPropagation">
+      <view class="wechat-modal-header">
+        <text class="wechat-modal-title">微信联系</text>
+        <text class="wechat-modal-close" bindtap="onCloseWechatModal">✕</text>
+      </view>
+      <view class="wechat-modal-body">
+        <view class="wechat-info">
+          <text class="wechat-label">我的微信号：</text>
+          <view class="wechat-id-container">
+            <text class="wechat-id">{{wechatId}}</text>
+            <view class="copy-btn" bindtap="onCopyWechatId">
+              <text class="copy-text">复制</text>
+            </view>
+          </view>
+        </view>
+        <view class="wechat-tip">
+          <text class="tip-text">点击复制微信号，添加好友时粘贴即可</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

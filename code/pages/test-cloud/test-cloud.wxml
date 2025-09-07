@@ -1,0 +1,51 @@
+<!--pages/test-cloud/test-cloud.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">云函数测试</text>
+  </view>
+  
+  <view class="button-group">
+    <button class="test-btn" bindtap="testGetVenues" disabled="{{loading}}">
+      测试获取球馆列表
+    </button>
+    
+    <button class="test-btn" bindtap="testSearch" disabled="{{loading}}">
+      测试搜索功能
+    </button>
+    
+    <button class="test-btn" bindtap="testDistrictFilter" disabled="{{loading}}">
+      测试地区筛选
+    </button>
+    
+    <button class="test-btn" bindtap="testFacilityFilter" disabled="{{loading}}">
+      测试设施筛选
+    </button>
+    
+    <button class="clear-btn" bindtap="clearResult" disabled="{{loading}}">
+      清空结果
+    </button>
+  </view>
+  
+  <view class="result-section" wx:if="{{result || venues.length > 0}}">
+    <view class="result-title">测试结果：</view>
+    <view class="result-text">{{result}}</view>
+    
+    <view class="venues-list" wx:if="{{venues.length > 0}}">
+      <view class="venue-item" wx:for="{{venues}}" wx:key="id">
+        <view class="venue-name">{{item.name}}</view>
+        <view class="venue-info">
+          <text class="venue-address">{{item.address}}</text>
+          <text class="venue-district">{{item.district}}</text>
+        </view>
+        <view class="venue-price">{{item.price}}</view>
+        <view class="venue-facilities" wx:if="{{item.facilities.length > 0}}">
+          设施：{{item.facilities.join('、')}}
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">{{result}}</text>
+  </view>
+</view>

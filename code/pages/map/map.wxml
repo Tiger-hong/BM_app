@@ -1,0 +1,23 @@
+<!--map.wxml-->
+<view class="map-container">
+  <!-- 地图 -->
+  <map 
+    id="map" 
+    class="map" 
+    longitude="{{longitude}}" 
+    latitude="{{latitude}}" 
+    scale="{{scale}}" 
+    min-scale="{{minScale}}"
+    max-scale="{{maxScale}}"
+    markers="{{markers}}" 
+    bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
+    show-location="false"
+    enable-zoom="true"
+    enable-scroll="true"
+    enable-rotate="false"
+    enable-overlooking="false"
+    enable-auto-rotate="false"
+    enable-3D="false">
+  </map>
+</view>

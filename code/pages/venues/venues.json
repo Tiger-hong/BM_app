@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "球馆列表",
+  "navigationBarBackgroundColor": "#9f2995",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "style": "v2",
+  "scrollIndicator": false
+}

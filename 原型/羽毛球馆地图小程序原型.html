@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>羽毛球馆地图小程序原型</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #00b4db 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .prototype-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .prototype-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .prototype-title::before {
+            content: '🏸';
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            animation: bounce 2s infinite;
+        }
+
+        .prototype-title::after {
+            content: '🏸';
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%) scaleX(-1);
+            font-size: 40px;
+            animation: bounce 2s infinite 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(-50%);
+            }
+            40% {
+                transform: translateY(-60%);
+            }
+            60% {
+                transform: translateY(-55%);
+            }
+        }
+
+        .screens-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* 美化滚动条 */
+        .screen-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .screen-content::-webkit-scrollbar-track {
+            background: rgba(0, 180, 219, 0.05);
+            border-radius: 3px;
+        }
+
+        .screen-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .screen-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #0083b0, #006b94);
+        }
+
+        /* 地图页面特殊布局 */
+        .screen-content.map-page {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-content.map-page .map-container {
+            flex: 1;
+            height: auto;
+        }
+
+        .screen-title {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-left {
+            color: #000;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .battery {
+            width: 24px;
+            height: 12px;
+            border: 1px solid #000;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .battery::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 3px;
+            width: 2px;
+            height: 6px;
+            background: #000;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-fill {
+            width: 80%;
+            height: 100%;
+            background: #34c759;
+            border-radius: 1px;
+        }
+
+        /* 导航栏 */
+        .nav-bar {
+            height: 60px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #e5e5e5;
+            position: relative;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .nav-back {
+            position: absolute;
+            left: 20px;
+            font-size: 16px;
+            color: #007aff;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            position: relative;
+        }
+
+        .search-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0,10 Q25,0 50,10 T100,10 V20 H0 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100px 20px;
+            animation: wave 3s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 100px; }
+        }
+
+        .search-input {
+            width: calc(100% - 60px);
+            height: 40px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #fff;
+            border-radius: 20px;
+            padding: 0 20px 0 45px;
+            font-size: 14px;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00b4db;
+            font-size: 16px;
+            z-index: 3;
+        }
+
+        .filter-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 90, 36, 0.4);
+        }
+
+        /* 地图区域 */
+        .map-container {
+            height: calc(100vh - 140px);
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #16a085 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            margin: 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .map-road {
+            position: absolute;
+            background: rgba(255,255,255,0.8);
+            border-radius: 4px;
+        }
+
+        .road-horizontal {
+            height: 12px;
+            width: 275px;
+            top: 200px;
+            left: 50px;
+        }
+
+        .road-vertical {
+            width: 12px;
+            height: 400px;
+            top: 0;
+            left: 150px;
+        }
+
+        .venue-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+        }
+
+        .venue-marker:hover {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .marker-blue {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            top: 150px;
+            left: 90px;
+            animation: pulse 2s infinite;
+        }
+
+        .marker-red {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            top: 220px;
+            left: 190px;
+            animation: pulse 2s infinite 0.5s;
+        }
+
+        .marker-green {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            top: 290px;
+            left: 250px;
+            animation: pulse 2s infinite 1s;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 rgba(255,255,255,0.7);
+            }
+            70% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 10px rgba(255,255,255,0);
+            }
+            100% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 rgba(255,255,255,0);
+            }
+        }
+
+        .user-location {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            top: 270px;
+            left: 177px;
+            box-shadow: 0 2px 10px rgba(155, 89, 182, 0.5);
+            animation: userPulse 1.5s infinite;
+        }
+
+        @keyframes userPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* 场馆卡片 */
+        .venue-cards {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .venue-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid rgba(0,180,219,0.1);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .venue-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,180,219,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .venue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,180,219,0.2);
+            border-color: #00b4db;
+        }
+
+        .venue-card:hover::before {
+            left: 100%;
+        }
+
+        .venue-image {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 36px;
+            box-shadow: 0 8px 20px rgba(0,180,219,0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .venue-card:hover .venue-image {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(0,180,219,0.4);
+        }
+
+        .venue-image::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .venue-info {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .venue-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50, #4a6b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .venue-name::after {
+            content: '🏸';
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 18px;
+            opacity: 0.8;
+            -webkit-text-fill-color: initial;
+            margin-left: 8px;
+        }
+
+
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95));
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(0,180,219,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: 34px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-2px);
+            background: rgba(0,180,219,0.1);
+        }
+
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-text {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #00b4db;
+            transform: scale(1.1);
+        }
+
+        .nav-item.active .nav-text {
+            color: #00b4db;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            background: rgba(0,180,219,0.15);
+        }
+
+        /* 场馆详情页面 */
+        .venue-detail {
+            background: #fff;
+        }
+
+        .venue-header {
+            height: 200px;
+            background: linear-gradient(135deg, #007aff, #5ac8fa);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 48px;
+        }
+
+        .venue-detail-info {
+            padding: 20px;
+        }
+
+        .venue-detail-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2c3e50, #4a6b8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            line-height: 1.2;
+        }
+        
+        .venue-detail-name::after {
+            content: '🏸';
+            font-size: 24px;
+            margin-left: 12px;
+            -webkit-text-fill-color: initial;
+        }
+
+        .venue-detail-address {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            background: rgba(0,180,219,0.08);
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 180, 219, 0.1);
+        }
+        
+        .venue-detail-address:hover {
+            background: rgba(0,180,219,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 219, 0.1);
+        }
+
+        .venue-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .feature-tag {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-size: 13px;
+            color: #495057;
+            font-weight: 500;
+            border: 1px solid rgba(0, 180, 219, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+        
+        .feature-tag.available {
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.1), rgba(0, 131, 176, 0.1));
+            color: #00b4db;
+            border-color: rgba(0, 180, 219, 0.3);
+            opacity: 1;
+            font-weight: 600;
+        }
+        
+        .feature-tag.available:hover {
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.15), rgba(0, 131, 176, 0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 219, 0.2);
+            border-color: rgba(0, 180, 219, 0.4);
+        }
+        
+        .feature-tag.unavailable {
+            background: linear-gradient(135deg, #f1f3f4, #e8eaed);
+            color: #9aa0a6;
+            border-color: rgba(154, 160, 166, 0.2);
+            opacity: 0.5;
+            position: relative;
+        }
+        
+        .feature-tag.unavailable::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 8px;
+            right: 8px;
+            height: 1px;
+            background: #9aa0a6;
+            transform: translateY(-50%);
+        }
+        
+        .feature-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 180, 219, 0.1);
+        }
+
+        .venue-description {
+            line-height: 1.8;
+            color: #34495e;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.03), rgba(0, 131, 176, 0.03));
+            border-radius: 18px;
+            border-left: 4px solid #00b4db;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 180, 219, 0.08);
+        }
+        
+        .venue-description::before {
+            content: '📝';
+            position: absolute;
+            top: -12px;
+            left: 18px;
+            font-size: 22px;
+            background: #fff;
+            padding: 2px 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .facility-list {
+            margin-bottom: 25px;
+            background: rgba(0, 180, 219, 0.03);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 180, 219, 0.1);
+        }
+
+        .facility-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .facility-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .facility-item {
+            text-align: center;
+            padding: 15px 10px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            font-size: 13px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 180, 219, 0.05);
+            color: #34495e;
+        }
+        
+        .facility-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 180, 219, 0.1);
+            border-color: rgba(0, 180, 219, 0.2);
+        }
+        
+        .facility-item span {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .venue-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 20px 0 25px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.08) 0%, rgba(0, 131, 176, 0.08) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 180, 219, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 180, 219, 0.1);
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 180, 219, 0.15);
+            border-color: rgba(0, 180, 219, 0.3);
+            background: rgba(255,255,255,1);
+        }
+
+        .stat-number {
+            font-size: 15px;
+            font-weight: bold;
+            color: #00b4db;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, rgba(0, 180, 219, 0.05) 0%, rgba(0, 131, 176, 0.05) 100%);
+            padding: 22px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 180, 219, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            margin-bottom: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0, 180, 219, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-item:hover {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .contact-label {
+            font-weight: 500;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-label::before {
+            font-size: 16px;
+        }
+        
+        .contact-label.phone::before {
+            content: '📞';
+        }
+        
+        .contact-label.address::before {
+            content: '📍';
+        }
+        
+        .contact-label.hours::before {
+            content: '🕒';
+        }
+
+        .contact-value {
+            color: #00b4db;
+            font-weight: 500;
+            background: rgba(0, 180, 219, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover .contact-value {
+            background: rgba(0, 180, 219, 0.2);
+            transform: scale(1.05);
+        }
+
+
+
+
+
+        /* 球馆列表页面样式 */
+        .venues-list-page {
+            background: #f8f9fa;
+        }
+
+        .venues-search-section {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .venues-search-bar {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .venues-search-bar:focus-within {
+            border-color: #00b4db;
+            box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.1);
+        }
+
+        .venues-search-input {
+            width: 100%;
+            height: 50px;
+            background: transparent;
+            border: none;
+            border-radius: 25px;
+            padding: 0 50px 0 20px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+        }
+
+        .venues-search-input::placeholder {
+            color: #999;
+        }
+
+        .venues-search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00b4db;
+            font-size: 20px;
+        }
+
+        .venues-sort-section {
+            padding: 15px 20px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .venues-sort-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .venues-sort-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .venues-sort-option {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .venues-sort-option.active {
+            background: rgba(0, 180, 219, 0.1);
+            border-color: #00b4db;
+            color: #00b4db;
+            font-weight: 600;
+        }
+
+        .venues-list-container {
+            padding: 20px;
+        }
+
+        .venues-list-item {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .venues-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .venues-item-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .venues-item-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFE082 0%, #FFD54F 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .venues-item-info {
+            flex: 1;
+        }
+
+        .venues-item-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .venues-item-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .venues-item-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .venues-item-status.open {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .venues-item-status.busy {
+            background: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .venues-item-status.closed {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        .venues-item-address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .venues-item-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .venues-item-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .venues-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .venues-stat-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .venues-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .venues-item-facilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .venues-facility-tag {
+            padding: 4px 10px;
+            background: rgba(0, 180, 219, 0.1);
+            color: #00b4db;
+            font-size: 11px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 180, 219, 0.2);
+        }
+
+        .venues-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .venues-action-btn {
+            flex: 1;
+            height: 36px;
+            border: none;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .venues-navigate-btn {
+            background: rgba(0, 180, 219, 0.1);
+            color: #00b4db;
+        }
+
+        .venues-detail-btn {
+            background: #00b4db;
+            color: white;
+        }
+
+        .venues-action-btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .venues-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .venues-empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .venues-empty-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .venues-empty-tip {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* 轮播图样式 */
+        .banner-container {
+            height: 200px;
+            margin: 0 0 20px 0;
+            border-radius: 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .banner-slider {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 50%, #005f7f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-slide:nth-child(1) {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #c44569 100%);
+        }
+
+        .banner-slide:nth-child(2) {
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 50%, #005f7f 100%);
+        }
+
+        .banner-slide:nth-child(3) {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #16a085 100%);
+        }
+
+        .banner-indicators {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .banner-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* 常看球馆样式 */
+        .frequent-venues {
+            margin: 0 20px 20px 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .frequent-venues-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .frequent-venue-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 12px;
+            padding: 20px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0, 180, 219, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .frequent-venue-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 180, 219, 0.15);
+        }
+
+        .frequent-venue-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .frequent-venue-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        /* 羽毛球资讯样式 */
+        .news-section {
+            margin: 0 20px 20px 20px;
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .news-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #00b4db;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 180, 219, 0.15);
+        }
+
+        .news-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            font-size: 12px;
+            color: #7f8c8d;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #bdc3c7;
+        }
+
+        .news-tag {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .screens-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .screen {
+                width: 350px;
+                height: 758px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-container">
+        <h1 class="prototype-title">羽毛球馆地图小程序原型设计</h1>
+        
+        <div class="screens-container">
+            <!-- 首页 -->
+            <div class="screen">
+                <div class="screen-content">
+                    <!-- 状态栏 -->
+                    <div class="status-bar">
+                        <div class="status-left">9:41</div>
+                        <div class="status-right">
+                            <span>●</span>
+                            <span>📶</span>
+                            <span>📶</span>
+                            <div class="battery">
+                                <div class="battery-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 搜索栏 -->
+                    <div class="search-bar">
+                        <div class="search-container">
+                            <input type="text" class="search-input" placeholder="搜索附近羽毛球馆">
+                            <span class="search-icon">🔍</span>
+                            <button class="filter-btn">⚙️</button>
+                        </div>
+                    </div>
+
+                    <!-- 轮播图 -->
+                    <div class="banner-container">
+                        <div class="banner-slider">
+                            <div class="banner-slide active">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">🏸</div>
+                                    <div>专业羽毛球馆</div>
+                                    <div style="font-size: 14px; opacity: 0.8;">优质场地 · 专业服务</div>
+                                </div>
+                            </div>
+                            <div class="banner-slide">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">🏆</div>
+                                    <div>羽毛球培训</div>
+                                    <div style="font-size: 14px; opacity: 0.8;">专业教练 · 技能提升</div>
+                                </div>
+                            </div>
+                            <div class="banner-slide">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+                                    <div>球友聚会</div>
+                                    <div style="font-size: 14px; opacity: 0.8;">结识球友 · 共享运动</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="banner-indicators">
+                            <div class="banner-dot active"></div>
+                            <div class="banner-dot"></div>
+                            <div class="banner-dot"></div>
+                        </div>
+                    </div>
+
+                    <!-- 常看球馆 -->
+                    <div class="frequent-venues">
+                        <h3 class="section-title">🏸 常看球馆</h3>
+                        <div class="frequent-venues-grid">
+                            <div class="frequent-venue-card">
+                                <div class="frequent-venue-icon">🏸</div>
+                                <div class="frequent-venue-name">星动羽毛球馆</div>
+                            </div>
+                            <div class="frequent-venue-card">
+                                <div class="frequent-venue-icon">🏸</div>
+                                <div class="frequent-venue-name">飞羽体育馆</div>
+                            </div>
+                            <div class="frequent-venue-card">
+                                <div class="frequent-venue-icon">🏸</div>
+                                <div class="frequent-venue-name">羽翼运动中心</div>
+                            </div>
+                            <div class="frequent-venue-card">
+                                <div class="frequent-venue-icon">🏸</div>
+                                <div class="frequent-venue-name">冠军羽毛球馆</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 羽毛球资讯 -->
+                    <div class="news-section">
+                        <h3 class="section-title">📰 羽毛球资讯</h3>
+                        <div class="news-list">
+                            <div class="news-item">
+                                <div class="news-title">羽毛球技巧：如何提高杀球威力</div>
+                                <div class="news-summary">掌握正确的杀球技巧，让你在球场上更具威胁性。本文详细介绍杀球的动作要领...</div>
+                                <div class="news-meta">
+                                    <span>2小时前</span>
+                                    <span class="news-tag">技巧</span>
+                                </div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-title">2024年羽毛球世锦赛精彩回顾</div>
+                                <div class="news-summary">世界顶级选手齐聚一堂，为我们带来了精彩绝伦的比赛。让我们一起回顾...</div>
+                                <div class="news-meta">
+                                    <span>5小时前</span>
+                                    <span class="news-tag">赛事</span>
+                                </div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-title">羽毛球装备选购指南</div>
+                                <div class="news-summary">选择合适的球拍和装备对提高球技至关重要。本指南将帮助你选择最适合的装备...</div>
+                                <div class="news-meta">
+                                    <span>1天前</span>
+                                    <span class="news-tag">装备</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 底部导航 -->
+                    <div class="bottom-nav">
+                        <div class="nav-item active">
+                            <div class="nav-icon">🏠</div>
+                            <div class="nav-text">首页</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="nav-icon">🗺️</div>
+                            <div class="nav-text">地图</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="nav-icon">🏸</div>
+                            <div class="nav-text">球馆</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">01. 首页</div>
+            </div>
+
+            <!-- 球馆列表页面 -->
+        <div class="screen venues-list-page" id="venues-screen" style="display: none;">
+            <!-- 搜索区域 -->
+            <div class="venues-search-section">
+                <div class="venues-search-bar">
+                    <input type="text" class="venues-search-input" placeholder="搜索球馆名称或地址">
+                    <div class="venues-search-icon">🔍</div>
+                </div>
+            </div>
+
+            <!-- 排序区域 -->
+            <div class="venues-sort-section">
+                <div class="venues-sort-label">排序：</div>
+                <div class="venues-sort-options">
+                    <div class="venues-sort-option active">距离最近</div>
+                    <div class="venues-sort-option">评分最高</div>
+                    <div class="venues-sort-option">价格最低</div>
+                </div>
+            </div>
+
+            <!-- 球馆列表 -->
+            <div class="venues-list-container">
+                <!-- 球馆项目1 -->
+                <div class="venues-list-item">
+                    <div class="venues-item-header">
+                        <div class="venues-item-logo">🏸</div>
+                        <div class="venues-item-info">
+                            <div class="venues-item-name-row">
+                                <div class="venues-item-name">星光羽毛球馆</div>
+                                <div class="venues-item-status open">营业中</div>
+                            </div>
+                            <div class="venues-item-address">朝阳区建国路88号</div>
+                            <div class="venues-item-time">营业时间：06:00-22:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="venues-item-stats">
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">评分</div>
+                            <div class="venues-stat-value">4.8</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">距离</div>
+                            <div class="venues-stat-value">1.2km</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">价格</div>
+                            <div class="venues-stat-value">¥45/时</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">场地</div>
+                            <div class="venues-stat-value">12个</div>
+                        </div>
+                    </div>
+
+                    <div class="venues-item-facilities">
+                        <div class="venues-facility-tag">停车场</div>
+                        <div class="venues-facility-tag">空调</div>
+                        <div class="venues-facility-tag">淋浴</div>
+                        <div class="venues-facility-tag">WiFi</div>
+                    </div>
+
+                    <div class="venues-item-actions">
+                        <button class="venues-action-btn venues-navigate-btn">导航</button>
+                        <button class="venues-action-btn venues-detail-btn">查看详情</button>
+                    </div>
+                </div>
+
+                <!-- 球馆项目2 -->
+                <div class="venues-list-item">
+                    <div class="venues-item-header">
+                        <div class="venues-item-logo">🏸</div>
+                        <div class="venues-item-info">
+                            <div class="venues-item-name-row">
+                                <div class="venues-item-name">飞羽体育中心</div>
+                                <div class="venues-item-status busy">较忙</div>
+                            </div>
+                            <div class="venues-item-address">海淀区中关村大街123号</div>
+                            <div class="venues-item-time">营业时间：07:00-23:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="venues-item-stats">
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">评分</div>
+                            <div class="venues-stat-value">4.6</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">距离</div>
+                            <div class="venues-stat-value">2.5km</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">价格</div>
+                            <div class="venues-stat-value">¥38/时</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">场地</div>
+                            <div class="venues-stat-value">8个</div>
+                        </div>
+                    </div>
+
+                    <div class="venues-item-facilities">
+                        <div class="venues-facility-tag">停车场</div>
+                        <div class="venues-facility-tag">空调</div>
+                        <div class="venues-facility-tag">商店</div>
+                    </div>
+
+                    <div class="venues-item-actions">
+                        <button class="venues-action-btn venues-navigate-btn">导航</button>
+                        <button class="venues-action-btn venues-detail-btn">查看详情</button>
+                    </div>
+                </div>
+
+                <!-- 球馆项目3 -->
+                <div class="venues-list-item">
+                    <div class="venues-item-header">
+                        <div class="venues-item-logo">🏸</div>
+                        <div class="venues-item-info">
+                            <div class="venues-item-name-row">
+                                <div class="venues-item-name">奥体羽毛球俱乐部</div>
+                                <div class="venues-item-status closed">已关闭</div>
+                            </div>
+                            <div class="venues-item-address">朝阳区奥体中心南路15号</div>
+                            <div class="venues-item-time">营业时间：08:00-21:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="venues-item-stats">
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">评分</div>
+                            <div class="venues-stat-value">4.9</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">距离</div>
+                            <div class="venues-stat-value">3.8km</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">价格</div>
+                            <div class="venues-stat-value">¥55/时</div>
+                        </div>
+                        <div class="venues-stat-item">
+                            <div class="venues-stat-label">场地</div>
+                            <div class="venues-stat-value">16个</div>
+                        </div>
+                    </div>
+
+                    <div class="venues-item-facilities">
+                        <div class="venues-facility-tag">停车场</div>
+                        <div class="venues-facility-tag">空调</div>
+                        <div class="venues-facility-tag">淋浴</div>
+                        <div class="venues-facility-tag">WiFi</div>
+                        <div class="venues-facility-tag">餐厅</div>
+                    </div>
+
+                    <div class="venues-item-actions">
+                        <button class="venues-action-btn venues-navigate-btn">导航</button>
+                        <button class="venues-action-btn venues-detail-btn">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 地图页面 -->
+            <div class="screen">
+                <div class="screen-content map-page">
+                    <!-- 状态栏 -->
+                    <div class="status-bar">
+                        <div class="status-left">9:41</div>
+                        <div class="status-right">
+                            <span>●</span>
+                            <span>📶</span>
+                            <span>📶</span>
+                            <div class="battery">
+                                <div class="battery-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 搜索栏 -->
+                    <div class="search-bar">
+                        <div class="search-container">
+                            <input type="text" class="search-input" placeholder="搜索附近羽毛球馆">
+                            <span class="search-icon">🔍</span>
+                            <button class="filter-btn">⚙️</button>
+                        </div>
+                    </div>
+
+                    <!-- 地图区域 -->
+                    <div class="map-container">
+                        <div class="map-grid"></div>
+                        <div class="map-road road-horizontal"></div>
+                        <div class="map-road road-vertical"></div>
+                        
+                        <!-- 场馆标记 -->
+                        <div class="venue-marker marker-blue">🏸</div>
+                        <div class="venue-marker marker-red">🏸</div>
+                        <div class="venue-marker marker-green">🏸</div>
+                        
+                        <!-- 用户位置 -->
+                        <div class="user-location"></div>
+                    </div>
+
+                    <!-- 底部导航 -->
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <div class="nav-icon">🏠</div>
+                            <div class="nav-text">首页</div>
+                        </div>
+                        <div class="nav-item active">
+                            <div class="nav-icon">🗺️</div>
+                            <div class="nav-text">地图</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="nav-icon">🏸</div>
+                            <div class="nav-text">球馆</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">02. 地图页面</div>
+            </div>
+
+            <!-- 场馆详情页 -->
+            <div class="screen">
+                <div class="screen-content">
+                    <!-- 状态栏 -->
+                    <div class="status-bar">
+                        <div class="status-left">9:41</div>
+                        <div class="status-right">
+                            <span>●</span>
+                            <span>📶</span>
+                            <span>📶</span>
+                            <div class="battery">
+                                <div class="battery-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 导航栏 -->
+                    <div class="nav-bar">
+                        <div class="nav-back">← 返回</div>
+                        <div class="nav-title">场馆详情</div>
+                    </div>
+
+                    <div class="venue-detail">
+                        <!-- 场馆头图 -->
+                        <div class="venue-header">🏸</div>
+
+                        <!-- 场馆信息 -->
+                        <div class="venue-detail-info">
+                            <h2 class="venue-detail-name">星动羽毛球馆</h2>
+                            <p class="venue-detail-address">📍 北京市朝阳区建国路88号</p>
+                            
+                            <div class="venue-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">12片</div>
+                                    <div class="stat-label">场地</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">¥80-120</div>
+                                    <div class="stat-label">费用/时</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">06:00-23:00</div>
+                                    <div class="stat-label">营业时间</div>
+                                </div>
+                            </div>
+                            
+                            <p class="venue-description">
+                                专业羽毛球场馆，拥有12片标准场地，采用进口地胶，灯光明亮均匀。提供球拍租借、教练指导等服务。场馆环境优雅，设施完善，是羽毛球爱好者的理想选择。
+                            </p>
+
+                            <div class="facility-list">
+                                <h3 class="facility-title">🏢 场馆设施</h3>
+                                <div class="facility-items">
+                                    <div class="facility-item">🚗<br>停车场</div>
+                                    <div class="facility-item">🚿<br>淋浴间</div>
+                                    <div class="facility-item">🥤<br>休息区</div>
+                                    <div class="facility-item">🏸<br>器材租借</div>
+                                    <div class="facility-item">📶<br>免费WiFi</div>
+                                    <div class="facility-item">❄️<br>空调</div>
+                                </div>
+                            </div>
+
+                            <div class="contact-info">
+                                <h3 class="facility-title">📱 联系方式</h3>
+                                <div class="contact-item">
+                                    <span class="contact-label phone">电话</span>
+                                    <span class="contact-value">010-12345678</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">03. 场馆详情</div>
+            </div>
+
+
+        </div>
+
+        <!-- 功能说明 -->
+        <div style="margin-top: 50px; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="margin-bottom: 20px; color: #333;">功能模块说明</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div>
+                    <h3 style="color: #007aff; margin-bottom: 10px;">🏠 首页模块</h3>
+                    <ul style="line-height: 1.8; color: #666;">
+                        <li>搜索附近羽毛球馆功能</li>
+                        <li>轮播图展示推荐内容</li>
+                        <li>常看球馆快速访问</li>
+                        <li>羽毛球资讯浏览</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #007aff; margin-bottom: 10px;">🗺️ 地图模块</h3>
+                    <ul style="line-height: 1.8; color: #666;">
+                        <li>实时显示附近羽毛球馆位置</li>
+                        <li>支持搜索和筛选功能</li>
+                        <li>场馆标记点击查看详情</li>
+                        <li>用户位置定位</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #007aff; margin-bottom: 10px;">🏸 场馆详情</h3>
+                    <ul style="line-height: 1.8; color: #666;">
+                        <li>场馆基本信息展示</li>
+                        <li>设施服务介绍</li>
+                        <li>联系方式信息</li>
+                        <li>场馆描述和特色</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #007aff; margin-bottom: 10px;">🏸 球馆列表</h3>
+                    <ul style="line-height: 1.8; color: #666;">
+                        <li>搜索球馆名称或地址</li>
+                        <li>按距离、评分、价格排序</li>
+                        <li>查看球馆详细信息</li>
+                        <li>球馆营业状态显示</li>
+                        <li>设施标签和统计数据</li>
+                        <li>导航和详情查看功能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互说明 -->
+        <div style="margin-top: 30px; padding: 30px; background: #f8f9fa; border-radius: 12px;">
+            <h2 style="margin-bottom: 20px; color: #333;">交互设计说明</h2>
+            
+            <div style="line-height: 1.8; color: #666;">
+                <p><strong>页面跳转：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>首页 → 点击常看球馆卡片 → 场馆详情页</li>
+                    <li>地图 → 点击场馆标记 → 场馆详情页</li>
+                    <li>球馆列表 → 点击球馆卡片 → 场馆详情页</li>
+                    <li>球馆列表 → 点击导航按钮 → 地图导航</li>
+                    <li>底部导航栏切换各个主要模块（首页、地图、球馆）</li>
+                </ul>
+                
+                <p><strong>简化设计理念：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>移除了复杂的预订和支付功能，专注于信息展示</li>
+                    <li>删除了收藏和个人中心功能，简化应用结构</li>
+                    <li>球馆列表页面提供完整的球馆信息和筛选功能</li>
+                    <li>专注于球馆发现和信息查看的核心功能</li>
+                </ul>
+                
+                <p><strong>交互反馈：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>卡片悬停有阴影和位移效果</li>
+                    <li>选中状态有明显的视觉区分</li>
+                    <li>轮播图自动切换，支持指示器点击</li>
+                    <li>场馆详情页支持滚动浏览</li>
+                    <li>常看球馆卡片居中对齐，突出场馆名称</li>
+                </ul>
+                
+                <p><strong>布局特点：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>原型页面自然水平排列，支持换行显示</li>
+                    <li>采用iPhone 15尺寸设计（375×812px）</li>
+                    <li>响应式布局适配不同屏幕</li>
+                    <li>最大宽度限制，避免在大屏幕上过度拉伸</li>
+                </ul>
+                
+                <p><strong>设计特色：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>整体采用羽毛球运动风格设计，突出活力与动感</li>
+                    <li>使用羽毛球元素（🏸）作为视觉点缀</li>
+                    <li>渐变色彩搭配，营造现代感</li>
+                    <li>卡片式设计，信息层次清晰</li>
+                    <li>配色方案参考专业羽毛球场地色彩</li>
+                    <li>简洁的信息架构，突出核心功能</li>
+                    <li>统一的视觉语言和交互模式</li>
+                </ul>
+                
+                <p><strong>用户体验优化：</strong></p>
+                <ul style="margin: 10px 0 20px 20px;">
+                    <li>减少操作步骤，提升浏览效率</li>
+                    <li>信息展示清晰，避免冗余内容</li>
+                    <li>保持界面简洁，专注核心功能</li>
+                    <li>统一的交互模式，降低学习成本</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 轮播图功能
+            const bannerSlides = document.querySelectorAll('.banner-slide');
+            const bannerDots = document.querySelectorAll('.banner-dot');
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                // 移除所有active类
+                bannerSlides.forEach(slide => slide.classList.remove('active'));
+                bannerDots.forEach(dot => dot.classList.remove('active'));
+                
+                // 添加active类到当前slide和dot
+                bannerSlides[index].classList.add('active');
+                bannerDots[index].classList.add('active');
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % bannerSlides.length;
+                showSlide(currentSlide);
+            }
+
+            // 自动轮播
+            setInterval(nextSlide, 3000);
+
+            // 点击指示器切换
+            bannerDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                });
+            });
+
+            // 场馆标记点击效果
+            const markers = document.querySelectorAll('.venue-marker');
+            markers.forEach(marker => {
+                marker.addEventListener('click', function() {
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+
+            // 导航项点击效果
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 场馆卡片滑动效果
+            const venueCards = document.querySelectorAll('.venue-card');
+            venueCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 模拟点击详情按钮的效果
+                    const infoBtn = this.querySelector('.info-btn');
+                    if (infoBtn) {
+                        infoBtn.style.backgroundColor = '#0056b3';
+                        setTimeout(() => {
+                            infoBtn.style.backgroundColor = '';
+                        }, 200);
+                    }
+                });
+            });
+            
+
+
+            // 常看球馆卡片点击效果
+            const frequentVenueCards = document.querySelectorAll('.frequent-venue-card');
+            frequentVenueCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // 新闻条目点击效果
+            const newsItems = document.querySelectorAll('.news-item');
+            newsItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = 'translateX(5px)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateX(0)';
+                    }, 150);
+                });
+            });
+
+            // 球馆列表页面功能
+            initVenuesPage();
+        });
+
+        // 球馆列表页面功能
+        function initVenuesPage() {
+            // 搜索功能
+            const searchInput = document.querySelector('.venues-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    filterVenues(searchTerm);
+                });
+            }
+
+            // 排序功能
+            const sortOptions = document.querySelectorAll('.venues-sort-option');
+            sortOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除其他选项的active状态
+                    sortOptions.forEach(opt => opt.classList.remove('active'));
+                    // 添加当前选项的active状态
+                    this.classList.add('active');
+                    
+                    // 执行排序
+                    const sortType = this.textContent;
+                    sortVenues(sortType);
+                });
+            });
+
+            // 球馆项目点击事件
+            const venueItems = document.querySelectorAll('.venues-list-item');
+            venueItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // 如果点击的是按钮，不触发项目点击事件
+                    if (e.target.classList.contains('venues-action-btn')) {
+                        return;
+                    }
+                    
+                    // 显示球馆详情
+                    showVenueDetail(this);
+                });
+            });
+
+            // 导航按钮事件
+            const navigateBtns = document.querySelectorAll('.venues-navigate-btn');
+            navigateBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const venueName = this.closest('.venues-list-item').querySelector('.venues-item-name').textContent;
+                    navigateToVenue(venueName);
+                });
+            });
+
+            // 详情按钮事件
+            const detailBtns = document.querySelectorAll('.venues-detail-btn');
+            detailBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const venueItem = this.closest('.venues-list-item');
+                    showVenueDetail(venueItem);
+                });
+            });
+        }
+
+        // 过滤球馆
+        function filterVenues(searchTerm) {
+            const venueItems = document.querySelectorAll('.venues-list-item');
+            venueItems.forEach(item => {
+                const venueName = item.querySelector('.venues-item-name').textContent.toLowerCase();
+                const venueAddress = item.querySelector('.venues-item-address').textContent.toLowerCase();
+                
+                if (venueName.includes(searchTerm) || venueAddress.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 排序球馆
+        function sortVenues(sortType) {
+            const container = document.querySelector('.venues-list-container');
+            if (!container) return;
+            
+            const items = Array.from(container.querySelectorAll('.venues-list-item'));
+            
+            items.sort((a, b) => {
+                switch(sortType) {
+                    case '距离最近':
+                        const distanceA = parseFloat(a.querySelectorAll('.venues-stat-value')[1].textContent);
+                        const distanceB = parseFloat(b.querySelectorAll('.venues-stat-value')[1].textContent);
+                        return distanceA - distanceB;
+                    case '评分最高':
+                        const ratingA = parseFloat(a.querySelector('.venues-stat-value').textContent);
+                        const ratingB = parseFloat(b.querySelector('.venues-stat-value').textContent);
+                        return ratingB - ratingA;
+                    case '价格最低':
+                        const priceA = parseInt(a.querySelectorAll('.venues-stat-value')[2].textContent.replace(/[^\d]/g, ''));
+                        const priceB = parseInt(b.querySelectorAll('.venues-stat-value')[2].textContent.replace(/[^\d]/g, ''));
+                        return priceA - priceB;
+                    default:
+                        return 0;
+                }
+            });
+            
+            // 重新排列DOM元素
+            items.forEach(item => container.appendChild(item));
+        }
+
+        // 导航到球馆
+        function navigateToVenue(venueName) {
+            alert(`正在为您导航到：${venueName}`);
+        }
+
+        // 显示球馆详情
+        function showVenueDetail(venueItem) {
+            const venueName = venueItem.querySelector('.venues-item-name').textContent;
+            alert(`查看球馆详情：${venueName}`);
+        }
+    </script>
+</body>
+</html>

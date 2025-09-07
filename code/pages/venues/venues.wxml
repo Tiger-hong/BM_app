@@ -1,0 +1,141 @@
+<!--venues.wxml-->
+<view class="venues-container">
+  <!-- 固定头部：搜索栏和筛选区域 -->
+  <view class="fixed-header">
+    <!-- 搜索栏 -->
+    <view class="search-section">
+      <view class="search-bar">
+        <input 
+          class="search-input" 
+          placeholder="搜索球馆名称或地址"
+          value="{{searchValue}}"
+          bindinput="onSearchInput"
+        />
+        <image class="search-icon" src="/images/icons/search.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <!-- 筛选区域 -->
+    <view class="filter-section">
+    <!-- 地区筛选 -->
+      <view class="region-filter">
+        <picker 
+          class="region-picker"
+          bindchange="onRegionChange" 
+          value="{{selectedRegionIndex}}" 
+          range="{{regionOptions}}" 
+          range-key="name"
+        >
+          <view class="picker-display">
+            <text class="picker-text">{{regionOptions[selectedRegionIndex].name}}</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+      <!-- 设施筛选 -->
+      <view class="facility-filter-options">
+        <view 
+          class="facility-filter-item {{selectedActive[item.id] ? 'active' : ''}}"
+          data-facility="{{item.id}}"
+          bindtap="onFacilityFilterToggle"
+          wx:for="{{facilityOptions}}"
+          wx:key="id"
+        >
+          <image class="facility-filter-icon" src="{{item.iconPath}}" mode="aspectFit"></image>
+          <text class="facility-filter-name">{{item.name}}</text>
+        </view>
+      </view>
+      <!-- 重置按钮 -->
+      <view class="reset-filter-btn" bindtap="onResetFilters">
+        <image class="reset-filter-icon" src="/images/icons/reset.png" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 球馆列表 -->
+  <view class="venues-list">
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading && filteredVenues.length === 0}}">
+      <view class="loading-container">
+        <!-- 羽毛球拍动画区域 -->
+        <view class="racket-animation">
+          <!-- 羽毛球拍拍面（水平线） -->
+          <view class="racket-face"></view>
+          <!-- 跳动的羽毛球 -->
+          <view class="bouncing-shuttlecock">
+            <image class="shuttlecock-icon" src="/images/icons/badminton1.png" mode="aspectFit"></image>
+          </view>
+        </view>
+        <!-- 加载文字 -->
+        <view class="loading-text-container">
+          <text class="loading-text">正在加载精彩球馆</text>
+          <view class="loading-dots">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view 
+      class="venue-card" 
+      wx:for="{{filteredVenues}}" 
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onVenueItemTap"
+    >
+      <!-- 球馆头部信息 -->
+      <view class="venue-header">
+        <view class="venue-logo">
+          <image 
+            class="venue-logo-img" 
+            src="{{item.logo}}" 
+            mode="aspectFill" 
+            wx:if="{{item.logo}}"
+          ></image>
+          <text class="venue-emoji" wx:else>🏸</text>
+        </view>
+        <view class="venue-basic-info">
+          <view class="venue-name-row">
+            <text class="venue-name">{{item.name}}</text>
+          </view>
+          <text class="venue-address">📍{{item.addressDisplay}}</text>
+        </view>
+      </view>
+
+      <!-- 球馆详细信息 -->
+      <view class="venue-details">
+        <view class="venue-stats">
+          <view class="stat-item">
+            <text class="stat-label">场地</text>
+            <text class="stat-value">{{item.courts}}片</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">营业时间</text>
+            <text class="stat-value">{{item.hours}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">价格</text>
+            <text class="stat-value">{{item.price}}</text>
+          </view>
+        </view>
+
+        <!-- 设施标签 -->
+        <!-- <view class="facilities">
+          <view class="facility-tag" wx:for="{{item.facilitiesDisplay}}" wx:key="code">
+            <image class="facility-tag-icon" src="{{item.iconPath}}" mode="aspectFit"></image>
+            <text class="facility-tag-name">{{item.name}}</text>
+          </view>
+        </view> -->
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && filteredVenues.length === 0}}">
+    <text class="empty-icon">🏸</text>
+    <text class="empty-text">暂无符合条件的球馆</text>
+    <text class="empty-tip">试试调整搜索条件</text>
+  </view>
+</view>

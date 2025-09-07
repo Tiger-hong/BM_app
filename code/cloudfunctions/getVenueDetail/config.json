@@ -1,0 +1,10 @@
+{
+  "name": "getVenueDetail",
+  "config": {
+    "timeout": 5,
+    "envVariables": {},
+    "runtime": "Nodejs16.13",
+    "memorySize": 256,
+    "layers": []
+  }
+}

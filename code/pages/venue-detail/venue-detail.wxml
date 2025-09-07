@@ -1,0 +1,139 @@
+<!--venue-detail.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-wrapper">
+      <!-- 羽毛球拍动画区域 -->
+      <view class="racket-animation">
+        <!-- 羽毛球拍拍面（水平线） -->
+        <view class="racket-face"></view>
+        <!-- 跳动的羽毛球 -->
+        <view class="bouncing-shuttlecock">
+          <image class="shuttlecock-icon" src="/images/icons/badminton1.png" mode="aspectFit"></image>
+        </view>
+      </view>
+      <!-- 加载文字 -->
+      <view class="loading-text-container">
+        <text class="loading-text">正在加载球馆详情</text>
+        <view class="loading-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情内容 -->
+  <view class="detail-content" wx:else>
+    <!-- 球馆图片轮播 -->
+    <view class="image-section">
+      <swiper 
+        class="image-swiper" 
+        indicator-dots="{{venue.images && venue.images.length > 1}}"
+        indicator-color="rgba(255,255,255,0.5)"
+        indicator-active-color="#ffffff"
+        autoplay="{{venue.images && venue.images.length > 1}}"
+        interval="5000"
+        duration="500"
+        bindchange="onSwiperChange"
+        wx:if="{{venue.images && venue.images.length > 0}}"
+      >
+        <swiper-item 
+          wx:for="{{venue.images}}" 
+          wx:key="*this"
+          data-index="{{index}}"
+          bindtap="onImageTap"
+        >
+          <image class="venue-image" src="{{item}}" mode="aspectFill"></image>
+        </swiper-item>
+      </swiper>
+      
+      <!-- 默认图片 -->
+      <view class="default-image" wx:else>
+        <image class="venue-image" src="/images/default-venue.jpg" mode="aspectFill"></image>
+      </view>
+      
+      <!-- 图片计数 -->
+      <view class="image-count" wx:if="{{venue.images && venue.images.length > 1}}">
+        <text>{{currentImageIndex + 1}}/{{venue.images.length}}</text>
+      </view>
+    </view>
+
+    <!-- 球馆基本信息 -->
+    <view class="venue-info">
+      <view class="venue-header">
+        <view class="venue-name">{{venue.name}}</view>
+      </view>
+
+      <view class="venue-address" bindtap="onOpenMap">
+        <text class="address-icon">📍</text>
+        <text class="address-text">{{venue.address}}</text>
+        <text class="copy-hint">点击查看</text>
+      </view>
+
+      <view class="venue-meta">
+        <view class="meta-item">
+          <text class="meta-icon">💰</text>
+          <view class="meta-content">
+            <text class="meta-label">价格</text>
+            <text class="meta-value">{{venue.priceDisplay}}</text>
+          </view>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">🕒</text>
+          <view class="meta-content">
+            <text class="meta-label">营业时间</text>
+            <text class="meta-value">{{venue.hoursDisplay}}</text>
+          </view>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">🏸</text>
+          <view class="meta-content">
+            <text class="meta-label">场地数量</text>
+            <text class="meta-value">{{venue.courtsDisplay}}</text>
+          </view>
+        </view>
+        <view class="meta-item" wx:if="{{venue.phone}}">
+          <text class="meta-icon">📞</text>
+          <view class="meta-content">
+            <text class="meta-label">联系电话</text>
+            <text class="meta-value phone-number" bindtap="onCopyPhone">{{venue.phone}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设施服务 -->
+    <view class="facilities-section">
+      <view class="section-title">
+        <text class="title-icon">🏸</text>
+        <text class="title-text">设施服务</text>
+      </view>
+      <view class="facilities-grid">
+        <view 
+          wx:for="{{allFacilities}}" 
+          wx:key="code" 
+          class="facility-item {{item.hasThis ? 'facility-available' : 'facility-unavailable'}}"
+          data-code="{{item.code}}"
+          data-facility="{{item}}"
+          bindtap="onFacilityTap"
+        >
+          <image class="facility-icon" src="{{item.iconPath}}" mode="aspectFit"></image>
+          <text class="facility-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 球馆介绍 -->
+    <view class="description-section" wx:if="{{venue.description}}">
+      <view class="section-title">
+        <text class="title-icon">📝</text>
+        <text class="title-text">球馆介绍</text>
+      </view>
+      <view class="description-content">
+        <text class="description-text">{{venue.description}}</text>
+      </view>
+    </view>
+  </view>
+</view>

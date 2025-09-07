@@ -1,0 +1,232 @@
+/* 战术分析页面样式 */
+.container {
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 10rpx 15rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 模式选择 */
+.mode-selector {
+  margin-bottom: 20rpx;
+  flex-shrink: 0;
+  padding: 0 5rpx;
+}
+
+.mode-tabs {
+  display: flex;
+  background: #ffffff;
+  border-radius: 12rpx;
+  padding: 6rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 15rpx;
+}
+
+/* 手绘功能按钮 */
+.drawing-controls {
+  display: flex;
+  gap: 10rpx;
+  justify-content: center;
+}
+
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15rpx 25rpx;
+  background: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 80rpx;
+}
+
+.control-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.4);
+}
+
+.control-btn.clear-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
+.control-btn.clear-btn:active {
+  background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+}
+
+.control-icon {
+  font-size: 32rpx;
+  margin-bottom: 5rpx;
+}
+
+.control-btn.active .control-icon,
+.control-btn.clear-btn .control-icon {
+  filter: grayscale(100%) brightness(0) invert(1);
+}
+
+.control-text {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #495057;
+}
+
+.control-btn.active .control-text,
+.control-btn.clear-btn .control-text {
+  color: #ffffff;
+}
+
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.mode-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.4);
+}
+
+.mode-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mode-tab.active .mode-text {
+  color: #ffffff;
+}
+
+/* 球场容器 */
+.court-container {
+  position: relative;
+  margin: 0;
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 15rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.court-canvas {
+  width: 100%;
+  flex: 1;
+  min-height: 500rpx;
+  border-radius: 12rpx;
+  display: block;
+  background-color: #027c4d;
+  border: 2rpx solid #e0e0e0;
+}
+
+/* 元素覆盖层 */
+.elements-overlay {
+  position: absolute;
+  top: 20rpx;
+  left: 20rpx;
+  right: 20rpx;
+  bottom: 20rpx;
+  pointer-events: none;
+}
+
+/* 羽毛球 */
+.shuttlecock {
+  position: absolute;
+  width: 70rpx;
+  height: 70rpx;
+  cursor: move;
+  pointer-events: auto;
+  z-index: 10;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.shuttlecock:active {
+  transform: scale(1.2);
+}
+
+/* 球员 */
+.player {
+  position: absolute;
+  width: 100rpx;
+  height: 110rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: move;
+  pointer-events: auto;
+  z-index: 5;
+  transition: transform 0.2s ease;
+}
+
+.player:active {
+  transform: scale(1.1);
+}
+
+.player-icon {
+  font-size: 75rpx;
+  margin-bottom: 8rpx;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.3));
+}
+
+.player-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  color: #ffffff;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.5);
+}
+
+/* A队球员（红色） */
+.player-a .player-label {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+}
+
+/* B队球员（蓝色） */
+.player-b .player-label {
+  background: linear-gradient(135deg,rgb(78, 133, 205) 0%,rgb(68, 97, 160) 100%);
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .container {
+    padding: 8rpx 12rpx;
+  }
+  
+  .mode-selector {
+    padding: 0 3rpx;
+  }
+  
+  .court-container {
+    padding: 12rpx;
+  }
+  
+  .court-canvas {
+    min-height: 400rpx;
+  }
+  
+  .player {
+    width: 90rpx;
+    height: 100rpx;
+  }
+  
+  .player-icon {
+    font-size: 65rpx;
+  }
+  
+  .player-label {
+    font-size: 24rpx;
+  }
+  
+  .shuttlecock {
+    width: 60rpx;
+    height: 60rpx;
+  }
+}

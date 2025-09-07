@@ -1,0 +1,111 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: white;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 9999;
+}
+
+.tab-bar-border {
+  background-color: rgba(0, 0, 0, 0.33);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  transform: scaleY(0.5);
+}
+
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.tab-bar-item-icon {
+  width: 27px;
+  height: 27px;
+  margin-bottom: 1px;
+}
+
+.tab-bar-item-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 球馆凸起图标样式 */
+.tab-bar-item-icon-raised {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  margin-bottom: -10px;
+  margin-top: -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.raised-bg {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(
+    135deg,
+    rgb(196, 196, 196) 0%,
+    rgb(87, 87, 87) 100%
+  );
+  border-radius: 50%;
+  border: 3px solid white;
+}
+
+.raised-bg-active {
+  background: linear-gradient(135deg, #9f2995 0%, #e91e63 100%);
+  box-shadow: 0 4px 12px rgba(159, 41, 149, 0.3);
+}
+
+.tab-bar-item-icon-raised image {
+  width: 30px;
+  height: 30px;
+  z-index: 1;
+  position: relative;
+}
+
+.tab-bar-item-text {
+  font-size: 10px;
+  margin-top: 0px;
+}
+
+/* 球馆文字特殊样式 */
+.tab-bar-item:nth-child(3) .tab-bar-item-text {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+/* 动画效果 */
+.tab-bar-item-icon-raised {
+  animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}

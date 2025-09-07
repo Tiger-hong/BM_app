@@ -1,0 +1,326 @@
+/* scoreboard.wxss */
+
+.scoreboard-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 顶部控制栏 */
+.top-controls {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx 40rpx;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10rpx);
+  flex-shrink: 0;
+}
+
+.control-btn {
+  padding: 16rpx 32rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.start-game-btn {
+  background: linear-gradient(135deg, #f17172, #f18d61);
+  color: white;
+  padding: 18rpx 60rpx;
+  border-radius: 25rpx;
+  font-size: 30rpx;
+  box-shadow: 0 6rpx 20rpx rgba(78, 205, 196, 0.3);
+}
+
+.reset-btn {
+  background: rgba(255, 107, 107, 0.8);
+  color: white;
+}
+
+.new-game-btn {
+  background: rgba(76, 175, 80, 0.8);
+  color: white;
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* 主要计分区域 - 竖屏布局 */
+.main-scoreboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20rpx 40rpx 40rpx;
+  gap: 30rpx;
+  min-height: 0;
+}
+
+/* 队伍区域 */
+.team-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 30rpx;
+  padding: 40rpx;
+  backdrop-filter: blur(15rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.team-area:active {
+  transform: scale(0.98);
+}
+
+.left-team {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+}
+
+.right-team {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.9), rgba(255, 154, 86, 0.9));
+}
+
+/* 队名输入 - 竖屏优化 */
+.team-name-container {
+  margin-bottom: 40rpx;
+  width: 100%;
+}
+
+.team-name-input {
+  background: rgba(255, 255, 255, 0.2);
+  border: 3rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: 16rpx;
+  padding: 0 25rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  width: 100%;
+  backdrop-filter: blur(10rpx);
+  box-sizing: border-box;
+  height: 95rpx;
+  line-height: 89rpx;
+}
+
+.team-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.team-name-input:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 分数显示 - 竖屏优化 */
+.score-container {
+  margin-bottom: 40rpx;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-display {
+  font-size: 220rpx;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.3);
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+}
+
+/* 分数控制按钮 - 竖屏优化 */
+.score-controls {
+  display: flex;
+  gap: 30rpx;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-btn {
+  width: 110rpx;
+  height: 75rpx;
+  border-radius: 18rpx;
+  font-size: 45rpx;
+  font-weight: bold;
+  color: white;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.minus-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+}
+
+.plus-btn {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+}
+
+.score-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.4);
+}
+
+/* VS分隔线 - 竖屏布局 */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  writing-mode: horizontal-tb;
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  margin: 0;
+}
+
+/* 比赛结束弹窗 */
+.game-over-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10rpx);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 32rpx;
+  padding: 60rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.4s ease-out;
+  border: 3rpx solid rgba(255, 255, 255, 0.2);
+  margin: 40rpx;
+  max-width: 500rpx;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-100rpx);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: white;
+  display: block;
+  margin-bottom: 20rpx;
+  text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+.winner-name {
+  font-size: 48rpx;
+  font-weight: 900;
+  color: #ffeaa7;
+  display: block;
+  margin-bottom: 15rpx;
+  text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+.final-score {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: white;
+  display: block;
+  margin-bottom: 40rpx;
+  opacity: 0.9;
+}
+
+.modal-btn {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  padding: 20rpx 50rpx;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.modal-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
+}
+
+/* 小屏幕适配 */
+@media (max-width: 750rpx) {
+  .score-display {
+    font-size: 160rpx;
+    text-align: center;
+  }
+  
+  .team-name-input {
+    font-size: 26rpx;
+    padding: 0 18rpx;
+    height: 85rpx;
+    line-height: 79rpx;
+  }
+  
+  .score-btn {
+    width: 100rpx;
+    height: 70rpx;
+    border-radius: 16rpx;
+    font-size: 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  
+  .vs-divider {
+    font-size: 28rpx;
+  }
+  
+  .top-controls {
+    padding: 15rpx 30rpx;
+  }
+  
+  .control-btn {
+    padding: 12rpx 24rpx;
+    font-size: 24rpx;
+  }
+  
+  .start-game-btn {
+    padding: 14rpx 40rpx;
+    font-size: 26rpx;
+  }
+}

@@ -1,0 +1,53 @@
+<!--scoreboard.wxml-->
+<view class="scoreboard-container">
+  <!-- 顶部控制栏 -->
+  <view class="top-controls">
+    <button class="control-btn start-game-btn" bindtap="startNewGame">开始比赛</button>
+  </view>
+
+  <!-- 主要计分区域 -->
+  <view class="main-scoreboard">
+    <!-- 左队 -->
+    <view class="team-area left-team">
+      <input 
+        class="team-name-input" 
+        placeholder="队伍A"
+        bindinput="onLeftTeamNameInput"
+        maxlength="8"
+      />
+      <text class="score-display">{{leftTeam.score}}</text>
+      <view class="score-controls">
+        <button class="score-btn minus-btn" bindtap="minusScore" data-team="left">-</button>
+        <button class="score-btn plus-btn" bindtap="addScore" data-team="left">+</button>
+      </view>
+    </view>
+
+    <!-- 中间分隔线和VS -->
+    <view class="vs-divider">VS</view>
+
+    <!-- 右队 -->
+    <view class="team-area right-team">
+      <input 
+        class="team-name-input" 
+        placeholder="队伍B"
+        bindinput="onRightTeamNameInput"
+        maxlength="8"
+      />
+      <text class="score-display">{{rightTeam.score}}</text>
+      <view class="score-controls">
+        <button class="score-btn minus-btn" bindtap="minusScore" data-team="right">-</button>
+        <button class="score-btn plus-btn" bindtap="addScore" data-team="right">+</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 比赛结束弹窗 -->
+  <view class="game-over-modal" wx:if="{{showGameOverModal}}">
+    <view class="modal-content">
+      <text class="modal-title">🎉 比赛结束 🎉</text>
+      <text class="winner-name">{{winner}} 获胜！</text>
+      <text class="final-score">{{leftTeam.score}} : {{rightTeam.score}}</text>
+      <button class="modal-btn" bindtap="closeGameOverModal">确定</button>
+    </view>
+  </view>
+</view>
