@@ -1,0 +1,89 @@
+<!-- divination.wxml -->
+<view class="container">
+  <!-- 背景装饰 -->
+  <view class="bg-decoration">
+    <text class="bg-emoji">🏸</text>
+    <text class="bg-emoji">🏸</text>
+    <text class="bg-emoji">🏸</text>
+  </view>
+
+  <!-- 标题区域 -->
+  <view class="header">
+    <text class="title">🔮 求签问球 🔮</text>
+    <text class="subtitle">今日打球运势如何？</text>
+  </view>
+
+  <!-- 签筒区域 -->
+  <view class="divination-container" wx:if="{{!hasDrawnToday}}">
+    <view class="divination-box {{shaking ? 'shake' : ''}}" bindtap="onShakeSignStick">
+      <view class="sign-stick-container">
+        <view class="sign-stick-icon">
+          <text class="sign-stick-emoji">🎋</text>
+          <view class="stick-glow"></view>
+        </view>
+        <text class="sign-stick-text">请诚心摇签</text>
+        <text class="sign-stick-hint">点击开始求签</text>
+      </view>
+    </view>
+    
+    <!-- 提示文字 -->
+    <view class="hint-text" wx:if="{{!shaking}}">
+      <text class="hint">诚心摇一摇，看看今日是否适宜打球</text>
+    </view>
+    
+    <!-- 摇签中提示 -->
+    <view class="shaking-text" wx:if="{{shaking}}">
+      <text class="shaking-hint">正在求签中...</text>
+      <view class="loading-dots">
+        <text class="dot">.</text>
+        <text class="dot">.</text>
+        <text class="dot">.</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果展示区域 -->
+  <view class="result-container" wx:if="{{showResult}}">
+    <view class="result-box" animation="{{resultAnimation}}">
+      <view class="result-header">
+        <text class="fortune-emoji">🎆</text>
+        <text class="result-title">{{result.title}}</text>
+        <view class="fortune-level" style="background: {{result.color}}">
+          <text class="fortune-text">{{result.level}}</text>
+        </view>
+      </view>
+      
+      <view class="result-content">
+        <text class="result-description">{{result.description}}</text>
+      </view>
+      
+      <view class="result-suggestion">
+        <view class="suggestion-icon">
+          <text class="suggestion-emoji">💡</text>
+        </view>
+        <view class="suggestion-content">
+          <text class="suggestion-title">建议：</text>
+          <text class="suggestion-text">{{result.suggestion}}</text>
+        </view>
+      </view>
+      
+      <!-- 明日再来提示 -->
+      <view class="come-back-tomorrow">
+        <text class="tomorrow-icon">🌅</text>
+        <text class="tomorrow-text">明日再来求签吧</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 说明区域 -->
+  <view class="explanation">
+    <view class="explanation-header">
+      <text class="explanation-title">说明</text>
+    </view>
+    <view class="explanation-content">
+      <text class="explanation-text">• 每位用户每天只能求签一次</text>
+      <text class="explanation-text">• 求签结果纯属娱乐，请理性对待</text>
+      <text class="explanation-text">• 运动有益健康，适度锻炼最重要</text>
+    </view>
+  </view>
+</view>

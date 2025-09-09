@@ -115,6 +115,13 @@
         </view>
         <text class="feature-name">战术分析</text>
       </view>
+      <!-- 求签问球功能 -->
+      <view class="feature-card" bindtap="onDivinationTap">
+        <view class="feature-icon">
+          <text class="feature-emoji">🔮</text>
+        </view>
+        <text class="feature-name">求签问球</text>
+      </view>
       <!-- 微信联系功能 -->
       <view class="feature-card" bindtap="onWechatContactTap">
         <view class="feature-icon">

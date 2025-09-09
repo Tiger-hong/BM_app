@@ -6,6 +6,7 @@
     "pages/venue-detail/venue-detail",
     "pages/scoreboard/scoreboard",
     "pages/tactics-analysis/tactics-analysis",
+    "pages/divination/divination",
     "pages/test-cloud/test-cloud"
   ],
   "window": {

@@ -293,6 +293,13 @@ Page({
     });
   },
 
+  // 求签问球点击
+  onDivinationTap() {
+    wx.navigateTo({
+      url: '/pages/divination/divination'
+    });
+  },
+
   // 微信联系点击
   onWechatContactTap() {
     this.setData({
